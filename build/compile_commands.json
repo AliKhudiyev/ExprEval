@@ -1,0 +1,12 @@
+[
+{
+  "directory": "/Users/alikhudiyev/Desktop/Projects/Expression-Evaluator/build",
+  "command": "/usr/local/bin/g++-10   -g -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX11.0.sdk -o CMakeFiles/main.dir/main.cpp.o -c /Users/alikhudiyev/Desktop/Projects/Expression-Evaluator/main.cpp",
+  "file": "/Users/alikhudiyev/Desktop/Projects/Expression-Evaluator/main.cpp"
+},
+{
+  "directory": "/Users/alikhudiyev/Desktop/Projects/Expression-Evaluator/build",
+  "command": "/usr/local/bin/g++-10   -g -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX11.0.sdk -o CMakeFiles/main.dir/expression.cpp.o -c /Users/alikhudiyev/Desktop/Projects/Expression-Evaluator/expression.cpp",
+  "file": "/Users/alikhudiyev/Desktop/Projects/Expression-Evaluator/expression.cpp"
+}
+]
