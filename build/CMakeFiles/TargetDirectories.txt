@@ -1,3 +1,0 @@
-/Users/alikhudiyev/Desktop/Projects/Expression-Evaluator/build/CMakeFiles/rebuild_cache.dir
-/Users/alikhudiyev/Desktop/Projects/Expression-Evaluator/build/CMakeFiles/edit_cache.dir
-/Users/alikhudiyev/Desktop/Projects/Expression-Evaluator/build/CMakeFiles/main.dir
