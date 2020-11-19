@@ -27,7 +27,7 @@ namespace ExprEval
         inline std::string get() const { return m_expression; }
 
         double evaluate(const std::string& expression){
-            std::cout<<" === Expr: "<<expression<<"\n";
+            // std::cout<<" === Expr: "<<expression<<"\n";
             NodeList list;
             Tokenizer tokenizer(expression);
             Node node;
@@ -77,8 +77,8 @@ namespace ExprEval
                 Node* node;
                 Operator::Specification* specification = nullptr;
 
-                list->print();
-                std::cout<<"| size: "<<list->size()<<'\n';
+                // list->print();
+                // std::cout<<"| size: "<<list->size()<<'\n';
                 size_t i = 0;
                 for(; i<list->size(); ++i){
                     Node curr_node = list->get(i);
@@ -87,7 +87,7 @@ namespace ExprEval
                     if(current_node->type == NodeType::Operator){
                         int current_priority = Operator::get_priority(current_node->symbol);
                         if(priority > current_priority){
-                            std::cout<<" |> set to operator ["<<current_priority<<"]{"<<current_node->symbol<<"}\n";
+                            // std::cout<<" |> set to operator ["<<current_priority<<"]{"<<current_node->symbol<<"}\n";
                             priority = current_priority;
                             opr_index_in_list = i;
                             symbol = node->symbol;

@@ -31,7 +31,7 @@ namespace ExprEval
         }
         Node get() const{
             Node node;
-            std::cout<<" >> current index: "<<m_index<<'\n';
+            // std::cout<<" >> current index: "<<m_index<<'\n';
             while(m_index < m_expression.size()){
                 if(m_expression[m_index] == '('){
                     size_t count = 1;
@@ -63,6 +63,7 @@ namespace ExprEval
                 size_t opr_index, opr_length = 0;
                 for (size_t i=0; i<m_table->size(); ++i){
                     size_t length = m_table->at(i).symbol.size();
+                    if(m_index + length > m_expression.size()) continue;
                     if(m_table->at(i).symbol.compare(m_expression.substr(m_index, length)) == 0){
                         if(opr_length < length){
                             opr_length = length;
@@ -73,7 +74,11 @@ namespace ExprEval
 
                 if(!opr_length) 
                     throw Exception(Error::Symbol_Not_Found, "node @ " + std::to_string(m_index));
-                
+                // else{
+                //     std::cout<<"operator: "<<m_table->at(opr_index).symbol<<'\n';
+                // }
+                m_index += opr_length - 1;
+
                 node.set(m_table->at(opr_index).symbol, false);
                 ++m_index;
                 return node;

@@ -102,7 +102,6 @@ namespace ExprEval
 
             private:
             double calc(size_t index, size_t direction=0){
-                // return 0;
                 Node node = m_nodes[index];
 
                 if(node.type == NodeType::Number){
