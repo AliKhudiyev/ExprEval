@@ -11,36 +11,48 @@ namespace ExprEval
         std::string m_expression;
         double m_result;
         bool is_calculated;
-        Tokenizer m_tokenizer;
 
         public:
         Expression(): 
             is_calculated(false) {}
         Expression(const std::string& expression):
-            m_expression(expression), is_calculated(false), m_tokenizer(Tokenizer(expression)) {}
+            m_expression(expression), is_calculated(false) {}
 
         inline void set(const std::string& expression){
             if(m_expression != expression){
                 m_expression = expression;
                 is_calculated = false;
-                m_tokenizer.set(expression);
             }
         }
         inline std::string get() const { return m_expression; }
 
         double evaluate(const std::string& expression){
+            std::cout<<" === Expr: "<<expression<<"\n";
             NodeList list;
-            m_tokenizer.set(expression);
-            Node* node;
-            while((node = m_tokenizer.get()))
+            Tokenizer tokenizer(expression);
+            Node node;
+            while(1)
             {
-                if(node->type == NodeType::Expression){
-                    double ans = evaluate(node->expression);
-                    node->set(ans);
+                try
+                {
+                    node = tokenizer.get();
                 }
-                // std::cout<<"type: "<<node->type<<"\n";
-                list.add(*node);
-            }
+                catch(const Exception& e)
+                {
+                    // std::cerr << e.what() << '\n';
+                    throw e;
+                }
+                
+                if(node.type == NodeType::Empty) break;
+
+                if(node.type == NodeType::Expression){
+                    double ans = evaluate(node.expression);
+                    // std::cout<<" >>> tmp ans: "<<ans<<'\n';
+                    node.set(ans);
+                }
+                // std::cout<<" | type: "<<node.type<<"\n";
+                list.add(node);
+            };
             // list.print();
             // std::cout<<"| "<<list.size()<<std::endl;
             return eval(&list);
@@ -75,7 +87,7 @@ namespace ExprEval
                     if(current_node->type == NodeType::Operator){
                         int current_priority = Operator::get_priority(current_node->symbol);
                         if(priority > current_priority){
-                            // std::cout<<" |> set to operator ["<<current_priority<<"]{"<<current_node->symbol<<"}\n";
+                            std::cout<<" |> set to operator ["<<current_priority<<"]{"<<current_node->symbol<<"}\n";
                             priority = current_priority;
                             opr_index_in_list = i;
                             symbol = node->symbol;
@@ -89,8 +101,18 @@ namespace ExprEval
                     result = list->calculate(0);
                     break;
                 }
-                double ans = list->calculate(opr_index_in_list);
-                result = ans;
+                try
+                {
+                    double ans;
+                    list->calculate(opr_index_in_list);
+                    result = ans;
+                }
+                catch(const Engine::Exception& e)
+                {
+                    // std::cerr << e.what() << '\n';
+                    throw e;
+                }
+                
                 // std::cout<<"ans: "<<ans<<'\n';
             }
             // std::cout<<"Eval done!\n";

@@ -55,11 +55,21 @@ namespace ExprEval
             inline size_t size() const{ return m_nodes.size(); }
 
             double calculate(size_t index){
-                std::cout<<"Index: "<<index<<'\n';
+                // std::cout<<"Index: "<<index<<'\n';
                 m_beg = index;
                 m_end = index + 1;
-                double ans = calc(index);
-                std::cout<<"beg: "<<m_beg<<", end: "<<m_end<<'\n';
+                double ans;
+                try
+                {
+                    ans = calc(index);
+                }
+                catch(const Exception& e)
+                {
+                    // std::cerr << e.what() << '\n';
+                    throw e;
+                }
+                
+                // std::cout<<"beg: "<<m_beg<<", end: "<<m_end<<'\n';
                 m_nodes.erase(m_nodes.begin()+m_beg, m_nodes.begin()+m_end);
 
                 Node node;
@@ -91,7 +101,7 @@ namespace ExprEval
             }
 
             private:
-            double calc(size_t index){
+            double calc(size_t index, size_t direction=0){
                 // return 0;
                 Node node = m_nodes[index];
 
@@ -106,17 +116,23 @@ namespace ExprEval
                     for(size_t i=0; i<specification->n_arg; ++i){
                         // TO DO
                         if(positions[i] < 0){
+                            if(direction == 1)
+                                throw Exception(Error::Expr_Logic, "node @ " + std::to_string(index));
+
                             m_beg = index - 1;
-                            args[i] = calc(index-1);
+                            args[i] = calc(index-1, -1);
                             // m_nodes.erase(m_nodes.begin()+index-1);
                         } else if(positions[i] > 0){
+                            if(direction == -1)
+                                throw Exception(Error::Expr_Logic, "node @ " + std::to_string(index));
+                            
                             m_end = index + 2;
-                            args[i] = calc(index+1);
+                            args[i] = calc(index+1, 1);
                             // m_nodes.erase(m_nodes.begin()+index+1);
                         }
                         // printf("> arg: %lf\n", args[i]);
                     }
-                    result = Operator::add(args);
+                    result = Operator::trigger(Operator::get_index(node.symbol), args);
 
                     return result;
                 } else{

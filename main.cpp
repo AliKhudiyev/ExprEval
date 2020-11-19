@@ -11,10 +11,15 @@ int main(){
 
     while(1){
         cin>>str;
-        // cout<<" = "<<expr.evaluate(str)<<endl;
-        ExprEval::Engine::Node* node;
-        ExprEval::NodeList list;
-        cout<<" = "<<expr.evaluate(str)<<endl;
+        
+        try
+        {
+            cout<<" = "<<expr.evaluate(str)<<endl;
+        }
+        catch(const ExprEval::Engine::Exception& e)
+        {
+            std::cerr << e.what() << '\n';
+        }
     }
 
     return 0;
