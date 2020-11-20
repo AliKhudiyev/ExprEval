@@ -10,7 +10,8 @@ int main(){
     string str;
 
     while(1){
-        cin>>str;
+        getline(cin, str);
+        if(str[0] == 'q') break;
         
         try
         {

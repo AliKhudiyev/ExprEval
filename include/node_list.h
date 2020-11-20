@@ -13,8 +13,13 @@ namespace ExprEval
             private:
             std::vector<Node> m_nodes;
             size_t m_beg, m_end;
+            Node m_cache;
 
             public:
+            NodeList(){
+                m_cache.type == NodeType::Empty;
+            }
+
             void add(Node node){
                 m_nodes.push_back(node);
             }

@@ -11,6 +11,8 @@ namespace ExprEval
         private:
         std::string m_expression;
         mutable size_t m_index;
+        mutable std::vector<Node> m_cache;
+
         public:
         Tokenizer(): 
             m_index(0) {}
@@ -21,9 +23,10 @@ namespace ExprEval
             m_expression = expression;
             m_index = 0;
         }
-        Node get() const;
+        Node get();
 
         private:
         bool is_digit(char c) const;
+        void tokenize();
     };
 } // namespace ExprEval

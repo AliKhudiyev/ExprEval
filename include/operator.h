@@ -10,19 +10,50 @@ namespace ExprEval
 {
     namespace Operator
     {
-        struct Specification{
+        struct BaseSpecification{
+            virtual ~BaseSpecification(){}
+
+            virtual std::string get_symbol() const = 0;
+            virtual size_t get_n_arg() const = 0;
+            virtual std::vector<int> get_arg_positons() const = 0;
+
+            virtual std::string convert(const std::vector<std::string>& args){ return ""; }
+        };
+
+        struct Specification: BaseSpecification{
             std::string symbol;
             size_t n_arg;
             std::vector<int> arg_positions;
             std::vector<std::string> pre_operators;
             std::vector<std::string> post_operators;
             int priority;
+
+            virtual std::string get_symbol() const{ return symbol; }
+            virtual size_t get_n_arg() const{ return n_arg; }
+            virtual std::vector<int> get_arg_positons() const{ return arg_positions; }
+        };
+
+        struct CustomOperator: BaseSpecification{
+            std::string symbol;
+            std::vector<std::string> variables;
+            std::vector<int> arg_positions;
+            std::string expression, result;
+
+            void replace(const std::string& var, const std::string& token);
+            virtual std::string convert(const std::vector<std::string>& args);
+
+            virtual std::string get_symbol() const{ return symbol; }
+            virtual size_t get_n_arg() const{ return variables.size(); }
+            virtual std::vector<int> get_arg_positons() const{ return arg_positions; }
         };
 
         static std::vector<Operator::Specification>* specification_table = nullptr;
+        static std::vector<Operator::CustomOperator>* custom_operator_table = nullptr;
 
         const std::vector<Operator::Specification>* get_spec_table();
+        const std::vector<Operator::CustomOperator>* get_custom_table();
         Operator::Specification* get_specification(const std::string& symbol);
+        Operator::CustomOperator* get_custom_specification(const std::string& symbol);
         int get_priority(const std::string& symbol);
         size_t get_index(const std::string& symbol);
 

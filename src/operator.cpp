@@ -4,6 +4,22 @@ namespace ExprEval
 {
     namespace Operator
     {
+        void CustomOperator::replace(const std::string& var, const std::string& token){
+            while(1){
+                size_t index = result.find(var, 0);
+                if(index == std::string::npos) break;
+                result.replace(result.begin()+index, result.begin()+index+var.size(), token);
+            }
+        }
+
+        std::string CustomOperator::convert(const std::vector<std::string>& args){
+            result = expression;
+            for(size_t i=0; i<variables.size(); ++i){
+                replace(variables[i], args[i]);
+            }
+            return result;
+        }
+
         const std::vector<Operator::Specification>* get_spec_table(){
             if(!specification_table){
                 srand(time(0));
@@ -237,6 +253,41 @@ namespace ExprEval
             return specification_table;
         }
 
+        const std::vector<Operator::CustomOperator>* get_custom_table(){
+            if(!custom_operator_table){
+                custom_operator_table = new std::vector<Operator::CustomOperator>;
+
+                CustomOperator operator_sqrt;
+                operator_sqrt.symbol = "sqrt";
+                operator_sqrt.variables.push_back("var");
+                operator_sqrt.arg_positions.push_back(1);
+                operator_sqrt.expression = "var^0.5";
+
+                CustomOperator operator_add;
+                operator_add.symbol = "add";
+                operator_add.variables.push_back("var");
+                operator_add.variables.push_back("hello");
+                operator_add.arg_positions.push_back(1);
+                operator_add.arg_positions.push_back(2);
+                operator_add.expression = "var+hello";
+
+                CustomOperator operator_f;
+                operator_f.symbol = "f";
+                operator_f.variables.push_back("x");
+                operator_f.variables.push_back("y");
+                operator_f.variables.push_back("z");
+                operator_f.arg_positions.push_back(1);
+                operator_f.arg_positions.push_back(2);
+                operator_f.arg_positions.push_back(3);
+                operator_f.expression = "x^2+y^2+z^2";
+
+                custom_operator_table->push_back(operator_sqrt);
+                custom_operator_table->push_back(operator_add);
+                custom_operator_table->push_back(operator_f);
+            }
+            return custom_operator_table;
+        }
+
         Operator::Specification* get_specification(const std::string& symbol){
             auto table = specification_table;
             for(size_t i=0; i<table->size(); ++i){
@@ -244,6 +295,15 @@ namespace ExprEval
             }
             return nullptr;
         }
+
+        Operator::CustomOperator* get_custom_specification(const std::string& symbol){
+            auto table = custom_operator_table;
+            for(size_t i=0; i<table->size(); ++i){
+                if(table->at(i).symbol == symbol) return &(table->at(i));
+            }
+            return nullptr;
+        }
+
         int get_priority(const std::string& symbol){
             auto table = specification_table;
             for(size_t i=0; i<table->size(); ++i){
@@ -251,6 +311,7 @@ namespace ExprEval
             }
             return -1;
         }
+
         size_t get_index(const std::string& symbol){
             auto table = specification_table;
             for(size_t i=0; i<table->size(); ++i){

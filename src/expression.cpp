@@ -56,24 +56,34 @@ namespace ExprEval
             // list->print();
             // std::cout<<"| size: "<<list->size()<<'\n';
             size_t i = 0;
+            auto custom_table = Operator::get_custom_table();
             for(; i<list->size(); ++i){
                 Node curr_node = list->get(i);
                 Node* current_node = &curr_node;
                 // std::cout<<" > type: "<<current_node->type<<'\n';
                 if(current_node->type == NodeType::Operator){
                     int current_priority = Operator::get_priority(current_node->symbol);
-                    if(priority > current_priority){
+                    if(current_priority == -1){
+                        auto custom_specification = Operator::get_custom_specification(current_node->symbol);
+                        if(custom_specification){
+                            // std::cout<<" |> set to operator ["<<current_priority<<"]{"<<current_node->symbol<<"}\n";
+                            priority = 3;
+                            opr_index_in_list = i;
+                            break;
+                        }
+                    }
+                    else if(priority > current_priority){
                         // std::cout<<" |> set to operator ["<<current_priority<<"]{"<<current_node->symbol<<"}\n";
                         priority = current_priority;
                         opr_index_in_list = i;
-                        symbol = node->symbol;
+                        symbol = current_node->symbol;
                         node = current_node;
                         specification = Operator::get_specification(current_node->symbol);
                     }
                 }
             }
             // std::cout<<"Found priority: "<<priority<<'\n';
-            if(priority == 100 || !specification){
+            if(priority == 100){            
                 result = list->calculate(0);
                 break;
             }
@@ -88,7 +98,6 @@ namespace ExprEval
                 // std::cerr << e.what() << '\n';
                 throw e;
             }
-            
             // std::cout<<"ans: "<<ans<<'\n';
         }
         // std::cout<<"Eval done!\n";
