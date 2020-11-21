@@ -76,9 +76,6 @@ namespace ExprEval
                     auto custom_operator = custom_table->at(custom_opr_index);
                     // std::cout<<"custom operator: "<<custom_operator.symbol<<'\n';
                     size_t new_index = m_index+custom_operator.symbol.size();
-                    if(m_expression[new_index] != '('){
-                        throw Exception(Error::Expr_Logic, "node @ " + std::to_string(m_index));
-                    }
                     // std::cout<<"parsed symbol: "<<m_expression.substr(m_index, new_index-m_index)<<'\n';
                     node.set(m_expression.substr(m_index, new_index-m_index), false);
                     m_index = new_index;

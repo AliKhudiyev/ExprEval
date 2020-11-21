@@ -304,6 +304,7 @@ namespace ExprEval
             for(size_t i=0; i<custom_operator_table->size(); ++i){
                 if(custom_symbol == custom_operator_table->at(i).symbol){
                     custom_operator_table->erase(custom_operator_table->begin()+i);
+                    break;
                 }
             }
         }

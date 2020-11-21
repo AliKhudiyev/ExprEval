@@ -1,18 +1,18 @@
 #include <iostream>
 #include <string>
+#include <getopt.h>
 
 #include "include/expreval.h"
 
 using namespace std;
 
-int main(){
+int main(int argc, char** argv){
     ExprEval::Expression expr;
     string str;
 
     while(1){
         cout<<"Give it to me: ";
-        // getline(cin, str);
-        cin>>str;
+        getline(cin, str);
         if(str[0] == 'q') break;
         else if(str[0] == '>'){
             ExprEval::Operator::CustomOperator custom_operator;
@@ -34,6 +34,7 @@ int main(){
 
             ExprEval::Operator::add_custom_operator(custom_operator);
             cout<<"= = = = = = = = = = = = = =\n";
+            cin.ignore();
             continue;
         } else if(str[0] == '<'){
             string symbol;
@@ -41,6 +42,7 @@ int main(){
             cin>>symbol;
             ExprEval::Operator::remove_custom_operator(symbol);
             cout<<"= = = = = = = = = = = = = =\n";
+            cin.ignore();
             continue;
         } else if(str[0] == '?'){
             auto custom_table = ExprEval::Operator::get_custom_table();
