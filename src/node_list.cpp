@@ -25,6 +25,7 @@ namespace ExprEval
             // std::cout<<"beg: "<<m_beg<<", end: "<<m_end<<'\n';
             if(m_cache.type == NodeType::Expression){
                 // std::cout<<"replacing with "<<m_cache.expression<<'\n';
+                // std::cout<<" from ["<<m_beg<<", "<<m_end<<"), size: "<<m_nodes.size()<<'\n';
                 m_nodes.erase(m_nodes.begin()+m_beg, m_nodes.begin()+m_end);
                 m_cache.type == NodeType::Empty;
 
@@ -88,14 +89,19 @@ namespace ExprEval
 
                 auto positions = specification->get_arg_positons();
                 double args[10];
+                // std::cout<<"index: "<<index<<", list size: "<<size()<<'\n';
                 for(size_t i=0; i<specification->get_n_arg(); ++i){
                     if(positions[i] < 0){
                         if(direction == 1){
                             throw Exception(Error::Expr_Logic, "node @ " + std::to_string(index));
                         }
 
-                        m_beg -= 1;
-                        args[i] = calc(index+positions[i], -1);
+                        if(index >= -positions[i]){
+                            m_beg -= 1;
+                            args[i] = calc(index+positions[i], -1);
+                        } else{
+                            args[i] = 0;
+                        }
                     } else if(positions[i] > 0){
                         if(direction == -1)
                             throw Exception(Error::Expr_Logic, "node @ " + std::to_string(index));

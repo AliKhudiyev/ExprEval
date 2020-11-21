@@ -279,13 +279,33 @@ namespace ExprEval
                 operator_f.arg_positions.push_back(1);
                 operator_f.arg_positions.push_back(2);
                 operator_f.arg_positions.push_back(3);
-                operator_f.expression = "x^2+y^2+z^2";
+                operator_f.expression = "(x)^2+(y)^2+(z)^2";
+
+                CustomOperator operator_id;
+                operator_id.symbol = "id";
+                operator_id.variables.push_back("x");
+                operator_id.arg_positions.push_back(1);
+                operator_id.expression = "x";
 
                 custom_operator_table->push_back(operator_sqrt);
                 custom_operator_table->push_back(operator_add);
                 custom_operator_table->push_back(operator_f);
+                custom_operator_table->push_back(operator_id);
             }
             return custom_operator_table;
+        }
+
+        void add_custom_operator(CustomOperator custom_operator){
+            auto custom_table = get_custom_table();
+            custom_operator_table->push_back(custom_operator);
+        }
+
+        void remove_custom_operator(const std::string& custom_symbol){
+            for(size_t i=0; i<custom_operator_table->size(); ++i){
+                if(custom_symbol == custom_operator_table->at(i).symbol){
+                    custom_operator_table->erase(custom_operator_table->begin()+i);
+                }
+            }
         }
 
         Operator::Specification* get_specification(const std::string& symbol){
