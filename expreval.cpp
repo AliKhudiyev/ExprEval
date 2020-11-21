@@ -22,11 +22,16 @@ int main(int argc, char** argv){
             cin>>custom_operator.symbol;
             cout<<" > # Args: ";
             cin>>n_arg;
-            for(size_t i=0; i<n_arg; ++i){
-                cout<<" > Variable: ";
+            for(size_t i=1; i<=n_arg; ++i){
+                cout<<" > Variable ["<<i<<"]: ";
                 string arg;
                 cin>>arg;
-                custom_operator.arg_positions.push_back(i+1);
+                if(arg.back() != '_'){
+                    cout<<" ! [Variable names should end with underscore(_)]\n";
+                    i -= 1;
+                    continue;
+                }
+                custom_operator.arg_positions.push_back(i);
                 custom_operator.variables.push_back(arg);
             }
             cout<<" > Expression: ";

@@ -17,7 +17,7 @@ namespace ExprEval
 
             public:
             NodeList(){
-                m_cache.type == NodeType::Empty;
+                m_cache.type = NodeType::Empty;
             }
 
             void add(Node node){

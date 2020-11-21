@@ -27,7 +27,7 @@ namespace ExprEval
                 // std::cout<<"replacing with "<<m_cache.expression<<'\n';
                 // std::cout<<" from ["<<m_beg<<", "<<m_end<<"), size: "<<m_nodes.size()<<'\n';
                 m_nodes.erase(m_nodes.begin()+m_beg, m_nodes.begin()+m_end);
-                m_cache.type == NodeType::Empty;
+                m_cache.type = NodeType::Empty;
 
                 ExprEval::Expression subexpr;
                 ans = subexpr.evaluate(m_cache.expression);

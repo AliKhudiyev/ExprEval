@@ -269,7 +269,7 @@ namespace ExprEval
                 operator_add.variables.push_back("hello");
                 operator_add.arg_positions.push_back(1);
                 operator_add.arg_positions.push_back(2);
-                operator_add.expression = "var+hello";
+                operator_add.expression = "var+(hello)";
 
                 CustomOperator operator_f;
                 operator_f.symbol = "f";

@@ -104,7 +104,7 @@ namespace ExprEval
     }
 
     void Tokenizer::tokenize(){
-        std::cout<<"sub expr: "<<m_expression.substr(m_index)<<'\n';
+        // std::cout<<"sub expr: "<<m_expression.substr(m_index)<<'\n';
         Node node;
         size_t count = 1;
         size_t beg = m_index+1;
