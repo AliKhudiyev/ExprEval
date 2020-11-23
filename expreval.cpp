@@ -3,12 +3,21 @@
 #include <getopt.h>
 
 #include "include/expreval.h"
+#include "include/function.h"
 
 using namespace std;
 
 int main(int argc, char** argv){
     ExprEval::Expression expr;
     string str;
+
+    ExprEval::Function f({"x[0]", "x[1]"}, "x[0]^2+x[1]*3");
+
+    string str_expr = f.get() + "(x[0]+x[1], x[0]-x[1]) / x[0]^2";
+    ExprEval::Function g({"x[0]", "x[1]"}, str_expr);
+
+    cout<<f({3, 4})<<endl;
+    cout<<g({3, 4})<<endl;
 
     while(1){
         cout<<"Give it to me: ";

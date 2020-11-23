@@ -11,7 +11,8 @@ add_library(expreval STATIC
     src/expression.cpp 
     src/tokenizer.cpp 
     src/operator.cpp 
-    src/node_list.cpp)
+    src/node_list.cpp
+    src/function.cpp)
 
 add_executable(main expreval.cpp)
 target_link_libraries(main expreval)

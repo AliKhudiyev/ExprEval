@@ -1,4 +1,5 @@
 #include "operator.h"
+#include <algorithm>
 
 namespace ExprEval 
 {
@@ -295,9 +296,23 @@ namespace ExprEval
             return custom_operator_table;
         }
 
-        void add_custom_operator(CustomOperator custom_operator){
+        void add_custom_operator(const CustomOperator& custom_operator){
             auto custom_table = get_custom_table();
-            custom_operator_table->push_back(custom_operator);
+            
+            // if(std::find(custom_table->cbegin(), custom_table->cend(), custom_operator) == custom_table->cend()){
+                custom_operator_table->push_back(custom_operator);
+            // }
+        }
+
+        void add_custom_operator(const std::string& symbol, const std::vector<std::string>& variables, const std::string& expression){
+            CustomOperator custom_operator;
+            custom_operator.symbol = symbol;
+            custom_operator.variables = variables;
+            for (size_t i=0; i<variables.size(); ++i){
+                custom_operator.arg_positions.push_back(i+1);
+            }
+            custom_operator.expression = expression;
+            add_custom_operator(custom_operator);
         }
 
         void remove_custom_operator(const std::string& custom_symbol){

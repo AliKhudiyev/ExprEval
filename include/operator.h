@@ -52,7 +52,8 @@ namespace ExprEval
 
         const std::vector<Operator::Specification>* get_spec_table();
         const std::vector<Operator::CustomOperator>* get_custom_table();
-        void add_custom_operator(CustomOperator custom_operator);
+        void add_custom_operator(const CustomOperator& custom_operator);
+        void add_custom_operator(const std::string& symbol, const std::vector<std::string>& variables, const std::string& expression);
         void remove_custom_operator(const std::string& custom_symbol);
 
         Operator::Specification* get_specification(const std::string& symbol);
