@@ -1,5 +1,7 @@
 # ExprEval
 
+![Logo](ExprEval.jpeg)
+
 Expression-Evaluator is a C++ library to evaluate a given string as a mathematical expression.
 
 ## Options

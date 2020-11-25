@@ -52,9 +52,9 @@ namespace ExprEval
 
         const std::vector<Operator::Specification>* get_spec_table();
         const std::vector<Operator::CustomOperator>* get_custom_table();
-        void add_custom_operator(const CustomOperator& custom_operator);
-        void add_custom_operator(const std::string& symbol, const std::vector<std::string>& variables, const std::string& expression);
-        void remove_custom_operator(const std::string& custom_symbol);
+        bool add_custom_operator(const CustomOperator& custom_operator);
+        bool add_custom_operator(const std::string& symbol, const std::vector<std::string>& variables, const std::string& expression);
+        bool remove_custom_operator(const std::string& custom_symbol);
 
         Operator::Specification* get_specification(const std::string& symbol);
         Operator::CustomOperator* get_custom_specification(const std::string& symbol);
@@ -96,8 +96,17 @@ namespace ExprEval
         double _gamma(double* args, size_t count=1);
         double _rand(double* args, size_t count=1);
 
-        double _pi(double* args, size_t count=1);
-        double _e(double* args, size_t count=1);
+        double _pi(double* args, size_t count=0);
+        double _e(double* args, size_t count=0);
+        double _true(double* args, size_t count=0);
+        double _false(double* args, size_t count=0);
+
+        double _and(double* args, size_t count=2);
+        double _or(double* args, size_t count=2);
+        double _not(double* args, size_t count=1);
+        double _xor(double* args, size_t count=2);
+        double _shiftl(double* args, size_t count=2);
+        double _shiftr(double* args, size_t count=2);
 
         double trigger(size_t index, double* args);
     } // namespace Operator

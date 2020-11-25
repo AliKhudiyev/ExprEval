@@ -10,33 +10,34 @@ namespace ExprEval
         private:
         std::string m_expression, m_symbol;
         std::vector<std::string> m_variables;
+        bool m_initialized = false;
 
         static ExprEval::Expression expression;
         static unsigned int n;
 
         public:
-        Function(const std::initializer_list<std::string>& variables, const std::string& expression): 
-            m_expression(expression), m_symbol("f_") 
-            {   
-                m_symbol += std::to_string(Function::n++);
-                for(auto it=variables.begin(); it!=variables.end(); ++it){
-                    size_t index = 0;
-
-                    while((index = m_expression.find(*it, index)) != std::string::npos){
-                        m_expression.replace(index, it->size(), "(" + (*it) + ")");
-                        // printf("replacing from %zu... | %s\n", index, m_expression.c_str());
-                        index += it->size() + 3;
-                    }
-                    m_variables.push_back(*it);
-                }
-                printf("final expr: %s\n", m_expression.c_str());
-                Operator::add_custom_operator(m_symbol, m_variables, m_expression);
-            }
+        Function() = default;
+        Function(const std::initializer_list<std::string>& variables, const std::string& expression){   
+            set(variables, expression);
+        }
+        Function(const std::vector<std::string>& variables, const std::string& expression){
+            set(variables, expression);
+        }
         ~Function(){
             --Function::n;
         }
         
+        void set(const std::initializer_list<std::string>& variables, const std::string& expression);
+        void set(const std::vector<std::string>& variables, const std::string& expression);
         inline std::string get() const{ return m_symbol; }
+        std::string get(const std::initializer_list<double>& arguments) const;
+        std::string get(const std::initializer_list<std::string>& arguments) const;
+        std::string get(const std::vector<std::string>& arguments) const;
+
         double operator()(const std::initializer_list<double>& arguments) const;
+        double operator()(const std::vector<double>& arguments) const;
+    
+        private:
+        void remove();
     };
 } // namespace ExprEval

@@ -1,8 +1,17 @@
 #include "operator.h"
 #include <algorithm>
+#include <functional>
+#include <iostream>
 
 namespace ExprEval 
 {
+    namespace Operator
+    {
+        bool equals(const CustomOperator& opr1, const CustomOperator& opr2){
+            return opr1.get_symbol() == opr2.get_symbol();
+        }
+    } // namespace Operator
+    
     namespace Operator
     {
         void CustomOperator::replace(const std::string& var, const std::string& token){
@@ -200,6 +209,7 @@ namespace ExprEval
                 spec_rand.n_arg = 0;
                 spec_rand.arg_positions.push_back(1);
 
+                /* Math constants */
                 Operator::Specification spec_pi;
                 spec_pi.symbol = "pi";
                 spec_pi.priority = 5;
@@ -209,6 +219,58 @@ namespace ExprEval
                 spec_e.symbol = "e";
                 spec_e.priority = 5;
                 spec_e.n_arg = 0;
+
+                Operator::Specification spec_true;
+                spec_true.symbol = "T";
+                spec_true.priority = 5;
+                spec_true.n_arg = 0;
+
+                Operator::Specification spec_false;
+                spec_false.symbol = "F";
+                spec_false.priority = 5;
+                spec_false.n_arg = 0;
+                /* = = = = = = = = */
+
+                Operator::Specification spec_and;
+                spec_and.symbol = "and";
+                spec_and.priority = 6;
+                spec_and.n_arg = 2;
+                spec_and.arg_positions.push_back(-1);
+                spec_and.arg_positions.push_back(1);
+
+                Operator::Specification spec_or;
+                spec_or.symbol = "or";
+                spec_or.priority = 6;
+                spec_or.n_arg = 2;
+                spec_or.arg_positions.push_back(-1);
+                spec_or.arg_positions.push_back(1);
+
+                Operator::Specification spec_not;
+                spec_not.symbol = "not";
+                spec_not.priority = 6;
+                spec_not.n_arg = 1;
+                spec_not.arg_positions.push_back(1);
+
+                Operator::Specification spec_xor;
+                spec_xor.symbol = "xor";
+                spec_xor.priority = 6;
+                spec_xor.n_arg = 2;
+                spec_xor.arg_positions.push_back(-1);
+                spec_xor.arg_positions.push_back(1);
+
+                Operator::Specification spec_shiftl;
+                spec_shiftl.symbol = "shiftl";
+                spec_shiftl.priority = 6;
+                spec_shiftl.n_arg = 2;
+                spec_shiftl.arg_positions.push_back(-1);
+                spec_shiftl.arg_positions.push_back(1);
+
+                Operator::Specification spec_shiftr;
+                spec_shiftr.symbol = "shiftr";
+                spec_shiftr.priority = 6;
+                spec_shiftr.n_arg = 2;
+                spec_shiftr.arg_positions.push_back(-1);
+                spec_shiftr.arg_positions.push_back(1);
 
                 specification_table->push_back(spec_add);
                 specification_table->push_back(spec_subtract);
@@ -250,6 +312,15 @@ namespace ExprEval
 
                 specification_table->push_back(spec_pi);
                 specification_table->push_back(spec_e);
+                specification_table->push_back(spec_true);
+                specification_table->push_back(spec_false);
+
+                specification_table->push_back(spec_and);
+                specification_table->push_back(spec_or);
+                specification_table->push_back(spec_not);
+                specification_table->push_back(spec_xor);
+                specification_table->push_back(spec_shiftl);
+                specification_table->push_back(spec_shiftr);
             }
             return specification_table;
         }
@@ -264,24 +335,6 @@ namespace ExprEval
                 operator_sqrt.arg_positions.push_back(1);
                 operator_sqrt.expression = "var^0.5";
 
-                CustomOperator operator_add;
-                operator_add.symbol = "add";
-                operator_add.variables.push_back("var");
-                operator_add.variables.push_back("hello");
-                operator_add.arg_positions.push_back(1);
-                operator_add.arg_positions.push_back(2);
-                operator_add.expression = "var+(hello)";
-
-                CustomOperator operator_f;
-                operator_f.symbol = "f";
-                operator_f.variables.push_back("x");
-                operator_f.variables.push_back("y");
-                operator_f.variables.push_back("z");
-                operator_f.arg_positions.push_back(1);
-                operator_f.arg_positions.push_back(2);
-                operator_f.arg_positions.push_back(3);
-                operator_f.expression = "(x)^2+(y)^2+(z)^2";
-
                 CustomOperator operator_id;
                 operator_id.symbol = "id";
                 operator_id.variables.push_back("x");
@@ -289,22 +342,21 @@ namespace ExprEval
                 operator_id.expression = "x";
 
                 custom_operator_table->push_back(operator_sqrt);
-                custom_operator_table->push_back(operator_add);
-                custom_operator_table->push_back(operator_f);
                 custom_operator_table->push_back(operator_id);
             }
             return custom_operator_table;
         }
 
-        void add_custom_operator(const CustomOperator& custom_operator){
+        bool add_custom_operator(const CustomOperator& custom_operator){
             auto custom_table = get_custom_table();
-            
-            // if(std::find(custom_table->cbegin(), custom_table->cend(), custom_operator) == custom_table->cend()){
+            if(std::find_if(custom_table->cbegin(), custom_table->cend(), std::bind(Operator::equals, custom_operator, std::placeholders::_1)) == custom_table->cend()){
                 custom_operator_table->push_back(custom_operator);
-            // }
+                return true;
+            }
+            return false;
         }
 
-        void add_custom_operator(const std::string& symbol, const std::vector<std::string>& variables, const std::string& expression){
+        bool add_custom_operator(const std::string& symbol, const std::vector<std::string>& variables, const std::string& expression){
             CustomOperator custom_operator;
             custom_operator.symbol = symbol;
             custom_operator.variables = variables;
@@ -312,16 +364,18 @@ namespace ExprEval
                 custom_operator.arg_positions.push_back(i+1);
             }
             custom_operator.expression = expression;
-            add_custom_operator(custom_operator);
+            return add_custom_operator(custom_operator);
         }
 
-        void remove_custom_operator(const std::string& custom_symbol){
+        bool remove_custom_operator(const std::string& custom_symbol){
+            if(custom_symbol.empty()) return false;
             for(size_t i=0; i<custom_operator_table->size(); ++i){
                 if(custom_symbol == custom_operator_table->at(i).symbol){
                     custom_operator_table->erase(custom_operator_table->begin()+i);
-                    break;
+                    return true;
                 }
             }
+            return false;
         }
 
         Operator::Specification* get_specification(const std::string& symbol){
@@ -393,6 +447,15 @@ namespace ExprEval
 
         double _pi(double* args, size_t count){ return M_PI; }
         double _e(double* args, size_t count){ return M_E; }
+        double _true(double* args, size_t count){ return 1; }
+        double _false(double* args, size_t count){ return 0; }
+
+        double _and(double* args, size_t count){ return (int)args[0] & (int)args[1]; }
+        double _or(double* args, size_t count){ return (int)args[0] | (int)args[1]; }
+        double _not(double* args, size_t count){ return !(int)args[0]; }
+        double _xor(double* args, size_t count){ return (int)args[0] ^ (int)args[1]; }
+        double _shiftl(double* args, size_t count){ return (int)args[0] << (int)args[1]; }
+        double _shiftr(double* args, size_t count){ return (int)args[0] >> (int)args[1]; }
 
         double trigger(size_t index, double* args){
             double result = 0.0;
@@ -457,6 +520,22 @@ namespace ExprEval
                 return _pi(args);
             } else if(index == 29){ // Adding a constant
                 return _e(args);
+            } else if(index == 30){ // Adding a constant
+                return _true(args);
+            } else if(index == 31){ // Adding a constant
+                return _false(args);
+            } else if(index == 32){
+                return _and(args);
+            } else if(index == 33){
+                return _or(args);
+            } else if(index == 34){
+                return _not(args);
+            } else if(index == 35){
+                return _xor(args);
+            } else if(index == 36){
+                return _shiftl(args);
+            } else if(index == 37){
+                return _shiftr(args);
             }
 
             return result;

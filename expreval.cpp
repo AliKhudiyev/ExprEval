@@ -3,7 +3,6 @@
 #include <getopt.h>
 
 #include "include/expreval.h"
-#include "include/function.h"
 
 using namespace std;
 
@@ -11,13 +10,22 @@ int main(int argc, char** argv){
     ExprEval::Expression expr;
     string str;
 
-    ExprEval::Function f({"x[0]", "x[1]"}, "x[0]^2+x[1]*3");
+    ExprEval::Function f({"x", "y"}, "x*y/100");
 
-    string str_expr = f.get() + "(x[0]+x[1], x[0]-x[1]) / x[0]^2";
-    ExprEval::Function g({"x[0]", "x[1]"}, str_expr);
+    ExprEval::Function g({"x[0]", "x[1]"}, f.get({"x[0]-x[1]", "80-x[1]"}) + "+x[0]*x[1]");
 
-    cout<<f({3, 4})<<endl;
-    cout<<g({3, 4})<<endl;
+    try
+    {
+        cout << f.get({4, 50}) << " = " << f({4, 50}) << endl;
+        cout << g.get({4, 50}) << " = " << g({4, 50}) << endl;
+
+        g.set({"x"}, "3*x+2");
+        cout << g.get({4}) << " = " << g({4}) << endl;
+    }
+    catch(const ExprEval::Engine::Exception& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
 
     while(1){
         cout<<"Give it to me: ";
