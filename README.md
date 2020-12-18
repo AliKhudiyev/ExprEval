@@ -20,32 +20,32 @@ Interactive mode allows you to create your custom symbols(functions). For exampl
 
 ```bash
 ./expreval
-5+3-2
+: 5+3-2
  = 6
 
 ```
 
 ```bash
 ./expreval --interactive
->   # To add new symbol
- > Symbol: my_function
- > Number of arguments: 3
- > Arguments: x y var # Positions: 1, 2, 3 respectively
- > Expression: x*y+var^2
+: >   # To add new symbol
+    > Symbol: my_function
+    > Number of arguments: 3
+    > Arguments: x y var # Positions: 1, 2, 3 respectively
+    > Expression: x*y+var^2
 = = = = = = = = =
 
-?   # To list all user-defined symbols
- : my_function(1,2,3)
+: ?   # To list all user-defined symbols
+    - my_function(x, y, var) = x*y+var^2
 = = = = = = = = =
 
-(3+2)*my_function(3,0,2)
+: (3+2)*my_function(3,0,2)
  = 20
 
-<   # To remove a user-defined symbol
- < Symbol: my_function
+: <   # To remove a user-defined symbol
+    < Symbol: my_function
 = = = = = = = = =
 
-?
+: ?
 = = = = = = = = =
 
 ```

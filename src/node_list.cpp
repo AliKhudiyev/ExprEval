@@ -69,6 +69,10 @@ namespace ExprEval
         }
 
         double NodeList::calc(size_t index, size_t direction){
+            if(index >= m_nodes.size()){
+                throw Exception(Error::Expr_Logic, "node @ " + std::to_string(index));
+            }
+
             Node node = m_nodes[index];
             bool is_standard_opr = true;
 

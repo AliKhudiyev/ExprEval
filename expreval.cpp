@@ -10,28 +10,80 @@ int main(int argc, char** argv){
     ExprEval::Expression expr;
     string str;
 
-    ExprEval::Function f({"x", "y"}, "x*y/100");
+    // ExprEval::Function f({"x", "y"}, "x*y/100");
+    // ExprEval::Function g({"x[0]", "x[1]"}, f.get({"x[0]-x[1]", "80-x[1]"}) + "+x[0]*x[1]");
 
-    ExprEval::Function g({"x[0]", "x[1]"}, f.get({"x[0]-x[1]", "80-x[1]"}) + "+x[0]*x[1]");
+    // try
+    // {
+    //     cout << f.get({4, 50}) << " = " << f({4, 50}) << endl;
+    //     cout << g.get({4, 50}) << " = " << g({4, 50}) << endl;
 
-    try
+    //     g.set({"x"}, "3*x+2");
+    //     cout << g.get({4}) << " = " << g({4}) << endl;
+    // }
+    // catch(const ExprEval::Engine::Exception& e)
+    // {
+    //     std::cerr << e.what() << '\n';
+    // }
+
+    int c;
+    int interactive_flag = 0;
+
+    while (1){
+        static struct option long_options[] =
+        {
+            {"interactive",   no_argument,       &interactive_flag, 1},
+            {0, 0, 0, 0}
+        };
+    
+        /* getopt_long stores the option index here. */
+        int option_index = 0;
+        c = getopt_long(argc, argv, "i:", long_options, &option_index);
+
+        /* Detect the end of the options. */
+        if (c == -1)
+            break;
+
+        switch (c)
+            {
+            case 0:
+            /* If this option set a flag, do nothing else now. */
+                if (long_options[option_index].flag != 0)
+                    break;
+                printf ("option %s", long_options[option_index].name);
+                if (optarg)
+                    printf (" with arg %s", optarg);
+                printf ("\n");
+                break;
+
+            case 'i':
+                cout << " = " << expr.evaluate(string(optarg)) << endl;
+                // puts ("option -i\n");
+                return 0;
+
+            case '?':
+                /* getopt_long already printed an error message. */
+                break;
+
+            default:
+                abort ();
+            }
+        }
+
+    /* Print any remaining command line arguments (not options). */
+    if (optind < argc)
     {
-        cout << f.get({4, 50}) << " = " << f({4, 50}) << endl;
-        cout << g.get({4, 50}) << " = " << g({4, 50}) << endl;
-
-        g.set({"x"}, "3*x+2");
-        cout << g.get({4}) << " = " << g({4}) << endl;
-    }
-    catch(const ExprEval::Engine::Exception& e)
-    {
-        std::cerr << e.what() << '\n';
+        printf ("non-option ARGV-elements: ");
+        while (optind < argc)
+            printf ("%s ", argv[optind++]);
+        putchar ('\n');
     }
 
     while(1){
-        cout<<"Give it to me: ";
+        cout<<": ";
         getline(cin, str);
         if(str[0] == 'q') break;
-        else if(str[0] == '>'){
+        else if(str[0] == '>' && interactive_flag){
             ExprEval::Operator::CustomOperator custom_operator;
             size_t n_arg;
 
@@ -58,7 +110,7 @@ int main(int argc, char** argv){
             cout<<"= = = = = = = = = = = = = =\n";
             cin.ignore();
             continue;
-        } else if(str[0] == '<'){
+        } else if(str[0] == '<' && interactive_flag){
             string symbol;
             cout<<" < Symbol: ";
             cin>>symbol;
@@ -66,7 +118,7 @@ int main(int argc, char** argv){
             cout<<"= = = = = = = = = = = = = =\n";
             cin.ignore();
             continue;
-        } else if(str[0] == '?'){
+        } else if(str[0] == '?' && interactive_flag){
             auto custom_table = ExprEval::Operator::get_custom_table();
             for(size_t i=0; i<custom_table->size(); ++i){
                 auto custom_operator = custom_table->at(i);
