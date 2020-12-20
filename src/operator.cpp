@@ -2,6 +2,8 @@
 #include <algorithm>
 #include <functional>
 #include <iostream>
+#include <fstream>
+#include <sstream>
 
 namespace ExprEval 
 {
@@ -14,6 +16,65 @@ namespace ExprEval
     
     namespace Operator
     {
+        void BaseSpecification::write(const std::string& file_path){
+            auto table = custom_operator_table;
+            std::ofstream file(file_path);
+
+            if(!file){
+                throw Engine::Exception(Engine::Error::File, "Cannot open the specification file!");
+            }
+
+            for(size_t i=0; i<table->size(); ++i){
+                const auto& operator_ = table->at(i);
+                file << operator_.symbol << "," << operator_.variables.size() << ",";
+                for(const auto& var: operator_.variables){
+                    file << var << ",";
+                }
+                file << operator_.expression << std::endl;
+            }
+
+            file.close();
+        }
+
+        void BaseSpecification::read(const std::string& file_path){
+            auto table = custom_operator_table;
+            std::ifstream file(file_path);
+
+            if(!file){
+                throw Engine::Exception(Engine::Error::File, "Cannot open the specification file!");
+            }
+
+            std::string line;
+            std::string token;
+            std::stringstream stream;
+            std::string symbol;
+            std::vector<std::string> variables;
+            std::string expression;
+            while(std::getline(file, line)){
+                unsigned char count = 0;
+                stream.clear();
+                stream << line;
+                while(std::getline(stream, token, ',')){
+                    ++count;
+                    if(count == 1){
+                        symbol = token;
+                    }
+                    else if(count == 2){
+                        variables.resize(atol(token.c_str()));
+                    }
+                    else if(count > 2 && count <= variables.size() + 2){
+                        variables[count-3] = token;
+                    }
+                    else{
+                        expression = token;
+                    }
+                }
+                add_custom_operator(symbol, variables, expression);
+            }
+
+            file.close();
+        }
+
         void CustomOperator::replace(const std::string& var, const std::string& token){
             while(1){
                 size_t index = result.find(var, 0);

@@ -18,9 +18,12 @@ namespace ExprEval
             virtual std::vector<int> get_arg_positons() const = 0;
 
             virtual std::string convert(const std::vector<std::string>& args){ return ""; }
+
+            static void write(const std::string& file_path);
+            static void read(const std::string& file_path);
         };
 
-        struct Specification: BaseSpecification{
+        struct Specification: public BaseSpecification{
             std::string symbol;
             size_t n_arg;
             std::vector<int> arg_positions;
@@ -33,7 +36,7 @@ namespace ExprEval
             virtual std::vector<int> get_arg_positons() const{ return arg_positions; }
         };
 
-        struct CustomOperator: BaseSpecification{
+        struct CustomOperator: public BaseSpecification{
             std::string symbol;
             std::vector<std::string> variables;
             std::vector<int> arg_positions;
@@ -47,7 +50,9 @@ namespace ExprEval
             virtual std::vector<int> get_arg_positons() const{ return arg_positions; }
         };
 
+        /* built-in operators */
         static std::vector<Operator::Specification>* specification_table = nullptr;
+        /* custom operators */
         static std::vector<Operator::CustomOperator>* custom_operator_table = nullptr;
 
         const std::vector<Operator::Specification>* get_spec_table();

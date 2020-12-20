@@ -1,8 +1,9 @@
 #include <iostream>
 #include <string>
 #include <getopt.h>
+#include <expreval.h>
 
-#include "include/expreval.h"
+#define DEFAULT_SPECIFICATION_FILE_PATH "operators.spec"
 
 using namespace std;
 
@@ -79,6 +80,10 @@ int main(int argc, char** argv){
         putchar ('\n');
     }
 
+    if(interactive_flag){
+        cout << "(Enter 'h' for help)" << endl;
+    }
+
     while(1){
         cout<<": ";
         getline(cin, str);
@@ -87,12 +92,12 @@ int main(int argc, char** argv){
             ExprEval::Operator::CustomOperator custom_operator;
             size_t n_arg;
 
-            cout<<" > Symbol: ";
+            cout<<"\t> Symbol: ";
             cin>>custom_operator.symbol;
-            cout<<" > # Args: ";
+            cout<<"\t> # Args: ";
             cin>>n_arg;
             for(size_t i=1; i<=n_arg; ++i){
-                cout<<" > Variable ["<<i<<"]: ";
+                cout<<"\t> Variable ["<<i<<"]: ";
                 string arg;
                 cin>>arg;
                 if(arg.back() != '_'){
@@ -103,7 +108,7 @@ int main(int argc, char** argv){
                 custom_operator.arg_positions.push_back(i);
                 custom_operator.variables.push_back(arg);
             }
-            cout<<" > Expression: ";
+            cout<<"\t> Expression: ";
             cin>>custom_operator.expression;
 
             ExprEval::Operator::add_custom_operator(custom_operator);
@@ -124,13 +129,56 @@ int main(int argc, char** argv){
                 auto custom_operator = custom_table->at(i);
                 auto args = custom_operator.variables;
 
-                cout<<" - "<<custom_operator.symbol<<"(";
+                cout<<"\t- "<<custom_operator.symbol<<"(";
                 for(size_t j=0; j<args.size(); ++j){
                     cout<<args[j];
                     if(j < args.size()-1) cout<<", ";
                 }
                 cout<<") = "<<custom_operator.expression<<endl;
             }
+            cout<<"= = = = = = = = = = = = = =\n";
+            continue;
+        } else if(str[0] == 's' && interactive_flag){
+            string file_path;
+
+            cout << "\t[w] File path(default: operators.spec): ";
+            getline(cin, file_path);
+            if(file_path.empty()) file_path = DEFAULT_SPECIFICATION_FILE_PATH;
+
+            try
+            {
+                ExprEval::Operator::BaseSpecification::write(file_path);
+            }
+            catch(const std::exception& e)
+            {
+                std::cerr << e.what() << '\n';
+            }
+            cout<<"= = = = = = = = = = = = = =\n";
+            continue;
+        } else if(str[0] == 'l' && interactive_flag){
+            string file_path;
+
+            cout << "\t[r] File path(default: operators.spec): ";
+            getline(cin, file_path);
+            if(file_path.empty()) file_path = DEFAULT_SPECIFICATION_FILE_PATH;
+
+            try
+            {
+                ExprEval::Operator::BaseSpecification::read(file_path);
+            }
+            catch(const std::exception& e)
+            {
+                std::cerr << e.what() << '\n';
+            }
+            cout<<"= = = = = = = = = = = = = =\n";
+            continue;
+        } else if(str[0] == 'h' && interactive_flag){
+            cout << "\t| Use '>' to add a new operator/function;" << endl;
+            cout << "\t| Use '<' to remove an operator/function;" << endl;
+            cout << "\t| Use '?' to list all the user-defined operators/functions;" << endl;
+            cout << "\t| Use 's' to save all the user-defined operators/functions;" << endl;
+            cout << "\t| Use 'l' to load all the user-defined operators/functions;" << endl;
+            cout << "\t| Use 'q' to quit." << endl;
             cout<<"= = = = = = = = = = = = = =\n";
             continue;
         }
